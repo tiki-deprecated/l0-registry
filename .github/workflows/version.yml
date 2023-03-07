@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  version:
+  Version:
     if: startsWith(github.head_ref, 'release/')
     runs-on: ubuntu-latest
     steps:
