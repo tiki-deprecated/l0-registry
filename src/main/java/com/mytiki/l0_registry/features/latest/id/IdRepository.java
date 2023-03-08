@@ -7,4 +7,8 @@ package com.mytiki.l0_registry.features.latest.id;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface IdRepository extends JpaRepository<IdDO, Long> {}
+import java.util.Optional;
+
+public interface IdRepository extends JpaRepository<IdDO, Long> {
+    Optional<IdDO> getByCustomerIdAndConfigAppId(String customerId, String appId);
+}

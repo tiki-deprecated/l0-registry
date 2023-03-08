@@ -5,6 +5,11 @@
 
 package com.mytiki.l0_registry.features.latest.sign;
 
+import com.mytiki.l0_registry.features.latest.id.IdDO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface SignRepository extends JpaRepository<SignDO, Long> {}
+import java.util.Optional;
+
+public interface SignRepository extends JpaRepository<SignDO, Long> {
+    Optional<SignDO> getFirstByIdOrderByCreatedDesc(IdDO id);
+}

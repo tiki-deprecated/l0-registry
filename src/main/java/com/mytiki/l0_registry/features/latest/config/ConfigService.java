@@ -44,6 +44,18 @@ public class ConfigService {
         return toRsp(repository.save(save));
     }
 
+    public ConfigDO getCreate(String appId){
+        Optional<ConfigDO> found = repository.getByAppId(appId);
+        if(found.isEmpty()){
+            ConfigDO save = new ConfigDO();
+            ZonedDateTime now = ZonedDateTime.now();
+            save.setAppId(appId);
+            save.setCreated(now);
+            save.setModified(now);
+            return repository.save(save);
+        }else return found.get();
+    }
+
     private ConfigAORsp toRsp(ConfigDO cfg) {
         ConfigAORsp rsp = new ConfigAORsp();
         rsp.setAppId(cfg.getAppId());
