@@ -6,7 +6,7 @@
 package com.mytiki.l0_registry.main;
 
 import com.mytiki.l0_registry.health.HealthConfig;
-import com.mytiki.l0_registry.features.latest.FeaturesConfig;
+import com.mytiki.l0_registry.features.FeaturesConfig;
 import com.mytiki.l0_registry.security.SecurityConfig;
 import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
 import io.swagger.v3.oas.models.Components;

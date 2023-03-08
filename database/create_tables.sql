@@ -27,10 +27,10 @@ CREATE TABLE IF NOT EXISTS cid(
 -- -----------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS sign_key(
      key_id BIGSERIAL PRIMARY KEY,
-     cid BIGSERIAL NOT NULL,
+     cid_id BIGSERIAL NOT NULL,
      private_key BYTEA NOT NULL UNIQUE,
      created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
-     FOREIGN KEY(cid) REFERENCES cid(cid_id)
+     FOREIGN KEY(cid_id) REFERENCES cid(cid_id)
 );
 
 -- -----------------------------------------------------------------------
@@ -38,9 +38,9 @@ CREATE TABLE IF NOT EXISTS sign_key(
 -- -----------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS address(
     address_id BIGSERIAL PRIMARY KEY,
-    cid BIGSERIAL NOT NULL,
+    cid_id BIGSERIAL NOT NULL,
     address bytea NOT NULL,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
-    FOREIGN KEY(cid) REFERENCES cid(cid_id),
-    UNIQUE(cid, address)
+    FOREIGN KEY(cid_id) REFERENCES cid(cid_id),
+    UNIQUE(cid_id, address)
 );

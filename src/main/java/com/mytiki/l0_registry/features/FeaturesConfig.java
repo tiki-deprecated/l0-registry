@@ -3,7 +3,7 @@
  * MIT license. See LICENSE file in root directory.
  */
 
-package com.mytiki.l0_registry.features.latest;
+package com.mytiki.l0_registry.features;
 
 import org.springframework.context.annotation.Import;
 
