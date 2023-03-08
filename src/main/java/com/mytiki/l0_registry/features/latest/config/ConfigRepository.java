@@ -7,4 +7,8 @@ package com.mytiki.l0_registry.features.latest.config;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ConfigRepository extends JpaRepository<ConfigDO, Long> {}
+import java.util.Optional;
+
+public interface ConfigRepository extends JpaRepository<ConfigDO, Long> {
+    Optional<ConfigDO> getByAppId(String appId);
+}
