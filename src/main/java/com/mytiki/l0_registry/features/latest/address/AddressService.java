@@ -6,7 +6,7 @@
 package com.mytiki.l0_registry.features.latest.address;
 
 import com.mytiki.l0_registry.features.latest.id.IdDO;
-import org.apache.commons.codec.binary.Base64;
+import com.mytiki.l0_registry.utilities.B64Url;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public class AddressService {
     }
 
     public void save(IdDO id, String address){
-        byte[] addressBytes = Base64.decodeBase64(address);
+        byte[] addressBytes = B64Url.decode(address);
         Optional<AddressDO> found = repository.findByIdAndAddress(id, addressBytes);
         if(found.isPresent()) return;
 

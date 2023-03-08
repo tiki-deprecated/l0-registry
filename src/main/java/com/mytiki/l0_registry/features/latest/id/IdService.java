@@ -10,11 +10,11 @@ import com.mytiki.l0_registry.features.latest.config.ConfigDO;
 import com.mytiki.l0_registry.features.latest.config.ConfigService;
 import com.mytiki.l0_registry.features.latest.sign.SignService;
 import com.mytiki.l0_registry.utilities.AddressSignature;
+import com.mytiki.l0_registry.utilities.B64Url;
 import com.mytiki.l0_registry.utilities.RSAFacade;
 import com.mytiki.l0_registry.utilities.SHA3Facade;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import jakarta.transaction.Transactional;
-import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.asn1.pkcs.RSAPublicKey;
 import org.springframework.http.HttpStatus;
 
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,17 +44,18 @@ public class IdService {
         this.addressService = addressService;
     }
 
+    @Transactional
     public IdAORsp get(String appId, String id, AddressSignature addressSignature){
         try {
             guardForSignature(addressSignature);
-            String address = Base64.encodeBase64String(
-                    SHA3Facade.sha256(Base64.decodeBase64(addressSignature.getPubKey())));
+            String address = B64Url.encode(SHA3Facade.sha256(
+                    Base64.getDecoder().decode(addressSignature.getPubKey())));
             Optional<IdDO> found = repository.getByCustomerIdAndConfigAppId(id, appId);
             if (found.isPresent()) {
                 Set<String> addressList = found.get()
                         .getAddresses()
                         .stream()
-                        .map(a -> Base64.encodeBase64String(a.getAddress()))
+                        .map(a -> B64Url.encode(a.getAddress()))
                         .collect(Collectors.toSet());
                 if (!addressList.contains(address))
                     throw new ApiExceptionBuilder(HttpStatus.UNAUTHORIZED)
@@ -97,7 +99,7 @@ public class IdService {
             Set<String> addresses = found.get()
                     .getAddresses()
                     .stream()
-                    .map(a -> Base64.encodeBase64String(a.getAddress()))
+                    .map(a -> B64Url.encode(a.getAddress()))
                     .collect(Collectors.toSet());
             addresses.add(req.getAddress());
             rsp.setAddresses(addresses);
@@ -110,7 +112,7 @@ public class IdService {
             RSAPublicKey publicKey = RSAFacade.decodePublicKey(signature.getPubKey());
             boolean isValid = RSAFacade.verify(publicKey, signature.getStringToSign(), signature.getSignature());
             if(!isValid)
-                throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
+                throw new ApiExceptionBuilder(HttpStatus.UNAUTHORIZED)
                         .message("Failed to validate key/signature paid")
                         .detail("Signature does not match plaintext")
                         .properties(
@@ -118,7 +120,7 @@ public class IdService {
                                 "signature", signature.getSignature())
                         .build();
         } catch (IOException | IllegalArgumentException e) {
-            throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
+            throw new ApiExceptionBuilder(HttpStatus.UNAUTHORIZED)
                     .message("Failed to validate key/signature paid")
                     .detail("Encoding is incorrect")
                     .cause(e.getCause())
@@ -128,8 +130,8 @@ public class IdService {
 
     private void guardForAddress(String address, String pubKey) {
         try {
-            byte[] addressBytes = Base64.decodeBase64(address);
-            byte[] hashedKey = SHA3Facade.sha256(Base64.decodeBase64(pubKey));
+            byte[] addressBytes = B64Url.decode(address);
+            byte[] hashedKey = SHA3Facade.sha256(Base64.getDecoder().decode(pubKey));
             if(!Arrays.equals(addressBytes, hashedKey)){
                 throw new ApiExceptionBuilder(HttpStatus.UNAUTHORIZED)
                         .message("Address validation failed")
