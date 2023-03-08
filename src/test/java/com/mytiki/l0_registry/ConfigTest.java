@@ -36,9 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ConfigTest {
 
     @Autowired
-    private ConfigRepository repository;
-
-    @Autowired
     private ConfigService service;
 
     @Test

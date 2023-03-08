@@ -5,6 +5,11 @@
 
 package com.mytiki.l0_registry.features.latest.address;
 
+import com.mytiki.l0_registry.features.latest.id.IdDO;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AddressRepository extends JpaRepository<AddressDO, Long> {}
+import java.util.Optional;
+
+public interface AddressRepository extends JpaRepository<AddressDO, Long> {
+    Optional<AddressDO> findByIdAndAddress(IdDO id, byte[] address);
+}

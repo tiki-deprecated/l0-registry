@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS cid(
      customer_id TEXT NOT NULL,
      config_id BIGSERIAL NOT NULL,
      created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
-     FOREIGN KEY(config_id) REFERENCES config(config_id)
+     FOREIGN KEY(config_id) REFERENCES config(config_id),
+     UNIQUE (customer_id, config_id)
 );
 
 -- -----------------------------------------------------------------------
