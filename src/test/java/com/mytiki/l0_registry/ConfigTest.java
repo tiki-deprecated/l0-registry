@@ -44,8 +44,7 @@ public class ConfigTest {
     @Test
     public void Test_Create_Success(){
         ZonedDateTime start = ZonedDateTime.now();
-        ConfigAOReq req = new ConfigAOReq();
-        req.setAppId(UUID.randomUUID().toString());
+        ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
         ConfigAORsp rsp = service.modify(req);
         assertEquals(req.getAppId(), rsp.getAppId());
         assertTrue(rsp.getCreated().isAfter(start));
@@ -56,8 +55,7 @@ public class ConfigTest {
 
     @Test
     public void Test_Get_Success(){
-        ConfigAOReq req = new ConfigAOReq();
-        req.setAppId(UUID.randomUUID().toString());
+        ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
         service.modify(req);
 
         ConfigAORsp rsp = service.get(req.getAppId());
@@ -70,8 +68,7 @@ public class ConfigTest {
 
     @Test
     public void Test_Modify_Endpoint_Success() throws URISyntaxException {
-        ConfigAOReq req = new ConfigAOReq();
-        req.setAppId(UUID.randomUUID().toString());
+        ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
         ConfigAORsp orig = service.modify(req);
         assertNull(orig.getJwksEndpoint());
 
@@ -84,8 +81,7 @@ public class ConfigTest {
 
     @Test
     public void Test_Modify_SingleClaim_Success() {
-        ConfigAOReq req = new ConfigAOReq();
-        req.setAppId(UUID.randomUUID().toString());
+        ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
         ConfigAORsp orig = service.modify(req);
         assertNull(orig.getJwksEndpoint());
 
@@ -98,7 +94,7 @@ public class ConfigTest {
 
     @Test
     public void Test_Modify_MultipleClaims_Success() {
-        ConfigAOReq req = new ConfigAOReq();
+        ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
         req.setAppId(UUID.randomUUID().toString());
         ConfigAORsp orig = service.modify(req);
         assertNull(orig.getJwksEndpoint());

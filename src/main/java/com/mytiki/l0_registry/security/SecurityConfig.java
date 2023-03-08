@@ -6,6 +6,7 @@
 package com.mytiki.l0_registry.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mytiki.l0_registry.features.latest.config.ConfigController;
 import com.mytiki.l0_registry.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.SecurityConstants;
@@ -26,6 +27,8 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.net.URL;
 import java.util.*;
@@ -33,6 +36,7 @@ import java.util.function.Predicate;
 
 @EnableWebSecurity
 public class SecurityConfig {
+    private static final String ADMIN_SCOPE = "SCOPE_admin";
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final JwtDecoder jwtDecoder;
@@ -71,15 +75,14 @@ public class SecurityConfig {
                 .anonymous().and()
                 .cors()
                 .configurationSource(SecurityConstants.corsConfigurationSource()).and()
-//                .csrf()
-//                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-//                .ignoringRequestMatchers(
-//                        new AntPathRequestMatcher(ReportController.PATH_CONTROLLER, HttpMethod.POST.name()),
-//                        new AntPathRequestMatcher(TokenController.PATH_CONTROLLER, HttpMethod.POST.name())
-//                ).and()
+                .csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers(
+                        new AntPathRequestMatcher(ConfigController.PATH_CONTROLLER, HttpMethod.POST.name())
+                ).and()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH ).permitAll()
-//                .requestMatchers(HttpMethod.POST, ReportController.PATH_CONTROLLER).hasRole(REMOTE_WORKER_ROLE)
+                .requestMatchers(ConfigController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
                 .anyRequest().authenticated().and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint).and()

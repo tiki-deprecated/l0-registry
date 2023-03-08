@@ -5,12 +5,14 @@
 
 package com.mytiki.l0_registry.features.latest.config;
 
+import com.mytiki.l0_registry.security.SecurityConfig;
 import com.mytiki.l0_registry.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
+import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "CONFIG")
@@ -25,7 +27,6 @@ public class ConfigController {
         this.service = service;
     }
 
-    @RolesAllowed("ADMIN")
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-config-get",
             summary = "Get Config", description = "Get a configuration",
             security = @SecurityRequirement(name = "jwt"))
@@ -35,7 +36,6 @@ public class ConfigController {
         return service.get(appId);
     }
 
-    @RolesAllowed("ADMIN")
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-config-post",
             summary = "Modify Config", description = "Modify a configuration",
             security = @SecurityRequirement(name = "jwt"))
