@@ -12,7 +12,7 @@ import java.util.List;
 public class ConfigAORsp {
     private String appId;
     private URI jwksEndpoint;
-    private List<String> claims;
+    private Boolean verifySubject;
     private ZonedDateTime created;
     private ZonedDateTime modified;
 
@@ -32,12 +32,12 @@ public class ConfigAORsp {
         this.jwksEndpoint = jwksEndpoint;
     }
 
-    public List<String> getClaims() {
-        return claims;
+    public Boolean getVerifySubject() {
+        return verifySubject;
     }
 
-    public void setClaims(List<String> claims) {
-        this.claims = claims;
+    public void setVerifySubject(Boolean verifySubject) {
+        this.verifySubject = verifySubject;
     }
 
     public ZonedDateTime getCreated() {

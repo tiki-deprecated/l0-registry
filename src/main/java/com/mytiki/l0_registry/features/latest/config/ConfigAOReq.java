@@ -15,15 +15,15 @@ import java.util.List;
 public class ConfigAOReq {
     private String appId;
     private URI jwksEndpoint;
-    private List<String> claims;
+    private Boolean verifySubject;
 
     @JsonCreator
     public ConfigAOReq(@JsonProperty(required = true) String appId,
                        @JsonProperty URI jwksEndpoint,
-                       @JsonProperty List<String> claims) {
+                       @JsonProperty Boolean verifySubject) {
         this.appId = appId;
         this.jwksEndpoint = jwksEndpoint;
-        this.claims = claims;
+        this.verifySubject = verifySubject;
     }
 
     public String getAppId() {
@@ -42,11 +42,11 @@ public class ConfigAOReq {
         this.jwksEndpoint = jwksEndpoint;
     }
 
-    public List<String> getClaims() {
-        return claims;
+    public Boolean getVerifySubject() {
+        return verifySubject;
     }
 
-    public void setClaims(List<String> claims) {
-        this.claims = claims;
+    public void setVerifySubject(Boolean verifySubject) {
+        this.verifySubject = verifySubject;
     }
 }

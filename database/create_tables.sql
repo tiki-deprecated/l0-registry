@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS config(
     config_id BIGSERIAL PRIMARY KEY,
     app_id TEXT NOT NULL UNIQUE,
     jwks_endpoint TEXT,
-    verify_claims TEXT,
+    verify_subject BOOLEAN DEFAULT FALSE,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
     modified_utc TIMESTAMP WITH TIME ZONE NOT NULL
 );
@@ -44,4 +44,15 @@ CREATE TABLE IF NOT EXISTS address(
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
     FOREIGN KEY(cid_id) REFERENCES cid(cid_id),
     UNIQUE(cid_id, address)
+);
+
+-- -----------------------------------------------------------------------
+-- JWKS
+-- -----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS jwks(
+    jwks_id BIGSERIAL PRIMARY KEY,
+    endpoint TEXT NOT NULL UNIQUE,
+    key_set TEXT NOT NULL,
+    modified_utc TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_utc TIMESTAMP WITH TIME ZONE NOT NULL
 );

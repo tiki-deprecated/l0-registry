@@ -56,7 +56,7 @@ public class IdTest {
         String signHeader = buildSignature(keypair);
 
         IdAORsp rsp = service.get(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                new AddressSignature(signHeader));
+                new AddressSignature(signHeader), null);
         assertNull(rsp);
     }
 
@@ -67,7 +67,7 @@ public class IdTest {
         String signHeader = buildSignature(keypair);
 
         IdAOReq req = new IdAOReq(UUID.randomUUID().toString(), address);
-        IdAORsp rsp = service.register(UUID.randomUUID().toString(), req, new AddressSignature(signHeader));
+        IdAORsp rsp = service.register(UUID.randomUUID().toString(), req, new AddressSignature(signHeader), null);
 
         assertNotNull(rsp.getSignKey());
         assertTrue(rsp.getAddresses().contains(address));
@@ -80,8 +80,8 @@ public class IdTest {
         String signHeader = buildSignature(keypair);
 
         IdAOReq req = new IdAOReq(UUID.randomUUID().toString(), address);
-        service.register(UUID.randomUUID().toString(), req, new AddressSignature(signHeader));
-        IdAORsp rsp2 = service.register(UUID.randomUUID().toString(), req, new AddressSignature(signHeader));
+        service.register(UUID.randomUUID().toString(), req, new AddressSignature(signHeader), null);
+        IdAORsp rsp2 = service.register(UUID.randomUUID().toString(), req, new AddressSignature(signHeader), null);
 
         assertTrue(rsp2.getAddresses().contains(address));
         assertEquals(rsp2.getAddresses().size(), 1);
@@ -95,13 +95,13 @@ public class IdTest {
         String address1 = address(keypair.toRSAPublicKey());
         String signHeader = buildSignature(keypair);
         IdAOReq req = new IdAOReq(UUID.randomUUID().toString(), address1);
-        IdAORsp rsp1 = service.register(appId, req, new AddressSignature(signHeader));
+        IdAORsp rsp1 = service.register(appId, req, new AddressSignature(signHeader), null);
 
         keypair = keypair();
         String address2 = address(keypair.toRSAPublicKey());
         signHeader = buildSignature(keypair);
         req.setAddress(address2);
-        IdAORsp rsp2 = service.register(appId, req, new AddressSignature(signHeader));
+        IdAORsp rsp2 = service.register(appId, req, new AddressSignature(signHeader), null);
 
         assertEquals(rsp1.getSignKey(), rsp2.getSignKey());
         assertEquals(rsp2.getAddresses().size(), 2);
@@ -119,8 +119,8 @@ public class IdTest {
         String signHeader = buildSignature(keypair);
 
         IdAOReq req = new IdAOReq(cid, address);
-        IdAORsp registerRsp = service.register(appId, req, new AddressSignature(signHeader));
-        IdAORsp getRsp = service.get(appId, cid, new AddressSignature(signHeader));
+        IdAORsp registerRsp = service.register(appId, req, new AddressSignature(signHeader), null);
+        IdAORsp getRsp = service.get(appId, cid, new AddressSignature(signHeader), null);
 
         assertEquals(registerRsp.getSignKey(), getRsp.getSignKey());
         assertEquals(registerRsp.getAddresses().size(), getRsp.getAddresses().size());
@@ -132,7 +132,7 @@ public class IdTest {
     public void Test_GetBadSig_Failure(){
         ApiException ex = assertThrows(ApiException.class,
                 () ->  service.get(UUID.randomUUID().toString(), UUID.randomUUID().toString(), new AddressSignature(
-                                UUID.randomUUID() + "." + UUID.randomUUID() + "." + UUID.randomUUID())));
+                                UUID.randomUUID() + "." + UUID.randomUUID() + "." + UUID.randomUUID()), null));
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getHttpStatus());
     }
 
@@ -145,13 +145,13 @@ public class IdTest {
         String address = address(keypair.toRSAPublicKey());
         String signHeader = buildSignature(keypair);
         IdAOReq req = new IdAOReq(cid, address);
-        service.register(appId, req, new AddressSignature(signHeader));
+        service.register(appId, req, new AddressSignature(signHeader), null);
 
         ApiException ex = assertThrows(ApiException.class,
                 () -> {
                     RSAKey kp = keypair();
                     String header = buildSignature(kp);
-                    service.get(appId, cid, new AddressSignature(header));
+                    service.get(appId, cid, new AddressSignature(header), null);
                 });
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getHttpStatus());
     }

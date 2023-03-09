@@ -18,7 +18,7 @@ public class ConfigDO implements Serializable {
     private Long configId;
     private String appId;
     private String jwksEndpoint;
-    private String claims;
+    private boolean verifySubject;
     private ZonedDateTime created;
     private ZonedDateTime modified;
 
@@ -42,7 +42,7 @@ public class ConfigDO implements Serializable {
         this.appId = appId;
     }
 
-    @Column(name = "jwksEndpoint")
+    @Column(name = "jwks_endpoint")
     public String getJwksEndpoint() {
         return jwksEndpoint;
     }
@@ -51,13 +51,13 @@ public class ConfigDO implements Serializable {
         this.jwksEndpoint = jwksEndpoint;
     }
 
-    @Column(name = "verify_claims")
-    public String getClaims() {
-        return claims;
+    @Column(name = "verify_subject")
+    public boolean getVerifySubject() {
+        return verifySubject;
     }
 
-    public void setClaims(String claims) {
-        this.claims = claims;
+    public void setVerifySubject(boolean verifySubject) {
+        this.verifySubject = verifySubject;
     }
 
     @Column(name = "created_utc")
