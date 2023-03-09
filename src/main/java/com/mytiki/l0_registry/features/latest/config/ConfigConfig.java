@@ -7,6 +7,7 @@ package com.mytiki.l0_registry.features.latest.config;
 
 
 import com.mytiki.l0_registry.utilities.Constants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,12 +18,12 @@ public class ConfigConfig {
     public static final String PACKAGE_PATH = Constants.PACKAGE_FEATURES_LATEST_DOT_PATH + ".config";
 
     @Bean
-    public ConfigController configController(ConfigService service){
+    public ConfigController configController(@Autowired ConfigService service){
         return new ConfigController(service);
     }
 
     @Bean
-    public ConfigService configService(ConfigRepository repository){
+    public ConfigService configService(@Autowired ConfigRepository repository){
         return new ConfigService(repository);
     }
 }

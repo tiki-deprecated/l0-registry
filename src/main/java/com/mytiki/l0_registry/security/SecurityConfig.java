@@ -24,6 +24,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
@@ -44,12 +45,11 @@ public class SecurityConfig {
     public SecurityConfig(
             @Autowired ObjectMapper objectMapper,
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") URL jwtJwkUri,
-            @Value("${spring.security.oauth2.resourceserver.jwt.jws-algorithms}") Set<JWSAlgorithm> jwtJwsAlgorithms,
             @Value("${spring.security.oauth2.resourceserver.jwt.audiences}") Set<String> jwtAudiences,
             @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String jwtIssuer) {
         this.accessDeniedHandler = new AccessDeniedHandler(objectMapper);
         this.authenticationEntryPoint = new AuthenticationEntryPoint(objectMapper);
-        this.jwtDecoder = jwtDecoder(jwtJwkUri, jwtJwsAlgorithms, jwtAudiences, jwtIssuer);
+        this.jwtDecoder = jwtDecoder(jwtJwkUri, jwtAudiences, jwtIssuer);
     }
 
     @Bean
@@ -95,14 +95,12 @@ public class SecurityConfig {
 
     private JwtDecoder jwtDecoder(
             URL jwtJwkUri,
-            Set<JWSAlgorithm> jwtJwsAlgorithms,
             Set<String> jwtAudiences,
             String jwtIssuer) {
-        DefaultJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        RemoteJWKSet<SecurityContext> remoteJWKSet = new RemoteJWKSet<>(jwtJwkUri);
-        jwtProcessor.setJWSKeySelector(
-                new JWSVerificationKeySelector<>(jwtJwsAlgorithms, remoteJWKSet));
-        NimbusJwtDecoder decoder = new NimbusJwtDecoder(jwtProcessor);
+        NimbusJwtDecoder decoder = NimbusJwtDecoder
+                .withJwkSetUri(jwtJwkUri.toString())
+                .jwsAlgorithm(SignatureAlgorithm.ES256)
+                .build();
         List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
         validators.add(new JwtTimestampValidator());
         validators.add(new JwtIssuerValidator(jwtIssuer));

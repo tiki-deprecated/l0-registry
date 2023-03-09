@@ -8,6 +8,7 @@ package com.mytiki.l0_registry.features.latest.id;
 import com.mytiki.l0_registry.features.latest.address.AddressService;
 import com.mytiki.l0_registry.features.latest.config.ConfigDO;
 import com.mytiki.l0_registry.features.latest.config.ConfigService;
+import com.mytiki.l0_registry.features.latest.jwks.JwksService;
 import com.mytiki.l0_registry.features.latest.sign.SignService;
 import com.mytiki.l0_registry.utilities.AddressSignature;
 import com.mytiki.l0_registry.utilities.B64Url;
@@ -32,20 +33,23 @@ public class IdService {
     private final ConfigService configService;
     private final SignService signService;
     private final AddressService addressService;
+    private final JwksService jwksService;
 
     public IdService(
             IdRepository repository,
             ConfigService configService,
             SignService signService,
-            AddressService addressService) {
+            AddressService addressService,
+            JwksService jwksService) {
         this.repository = repository;
         this.configService = configService;
         this.signService = signService;
         this.addressService = addressService;
+        this.jwksService = jwksService;
     }
 
     @Transactional
-    public IdAORsp get(String appId, String id, AddressSignature addressSignature){
+    public IdAORsp get(String appId, String id, AddressSignature addressSignature, String customerToken){
         try {
             guardForSignature(addressSignature);
             String address = B64Url.encode(SHA3Facade.sha256(
@@ -63,6 +67,7 @@ public class IdService {
                             .detail("Address is not a member")
                             .help("Try adding the address to the id first")
                             .build();
+                jwksService.guard(found.get().getCustomerId(), customerToken, found.get().getConfig());
                 IdAORsp rsp = new IdAORsp();
                 rsp.setAddresses(addressList);
                 rsp.setSignKey(signService.get(found.get()));
@@ -78,13 +83,14 @@ public class IdService {
     }
 
     @Transactional
-    public IdAORsp register(String appId, IdAOReq req, AddressSignature addressSignature){
+    public IdAORsp register(String appId, IdAOReq req, AddressSignature addressSignature, String customerToken){
         IdAORsp rsp = new IdAORsp();
         guardForSignature(addressSignature);
         guardForAddress(req.getAddress(), addressSignature.getPubKey());
         Optional<IdDO> found = repository.getByCustomerIdAndConfigAppId(req.getId(), appId);
         if(found.isEmpty()){
             ConfigDO config = configService.getCreate(appId);
+            jwksService.guard(req.getId(), customerToken, config);
             IdDO save = new IdDO();
             save.setConfig(config);
             save.setCustomerId(req.getId());
@@ -94,6 +100,7 @@ public class IdService {
             addressService.save(save, req.getAddress());
             rsp.setAddresses(Set.of(req.getAddress()));
         }else{
+            jwksService.guard(req.getId(), customerToken, found.get().getConfig());
             addressService.save(found.get(), req.getAddress());
             rsp.setSignKey(signService.get(found.get()));
             Set<String> addresses = found.get()

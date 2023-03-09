@@ -38,8 +38,8 @@ public class ConfigService {
         }
         if(req.getJwksEndpoint() != null)
             save.setJwksEndpoint(req.getJwksEndpoint().toString());
-        if(req.getClaims() != null)
-            save.setClaims(String.join(",", req.getClaims()));
+        if(req.getVerifySubject() != null)
+            save.setVerifySubject(req.getVerifySubject());
         save.setModified(now);
         return toRsp(repository.save(save));
     }
@@ -73,8 +73,7 @@ public class ConfigService {
                         .build();
             }
         }
-        if(cfg.getClaims() != null)
-            rsp.setClaims(List.of(cfg.getClaims().split(",")));
+        rsp.setVerifySubject(cfg.getVerifySubject());
         return rsp;
     }
 }

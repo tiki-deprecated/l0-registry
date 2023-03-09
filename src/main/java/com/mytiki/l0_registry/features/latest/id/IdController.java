@@ -34,8 +34,13 @@ public class IdController {
     @RequestMapping(method = RequestMethod.POST)
     public IdAORsp postId(Principal principal,
                           @RequestHeader(AddressSignature.HEADER) String addressSignature,
+                          @RequestHeader(value = "X-Customer-Authorization", required = false) String customerToken,
                           @RequestBody IdAOReq body) {
-        return service.register(principal.getName(), body, new AddressSignature(addressSignature));
+        return service.register(
+                principal.getName(),
+                body,
+                new AddressSignature(addressSignature),
+                customerToken.replace("Bearer: ", ""));
     }
 
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-id-get",
@@ -45,7 +50,12 @@ public class IdController {
     public IdAORsp postAddresses(
             Principal principal,
             @RequestHeader(AddressSignature.HEADER) String addressSignature,
+            @RequestHeader(value = "X-Customer-Authorization", required = false) String customerToken,
             @PathVariable("id") String id) {
-        return service.get(principal.getName(), id, new AddressSignature(addressSignature));
+        return service.get(
+                principal.getName(),
+                id,
+                new AddressSignature(addressSignature),
+                customerToken.replace("Bearer: ", ""));
     }
 }

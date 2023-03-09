@@ -46,7 +46,7 @@ public class ConfigTest {
         assertEquals(req.getAppId(), rsp.getAppId());
         assertTrue(rsp.getCreated().isAfter(start));
         assertTrue(rsp.getModified().isAfter(start));
-        assertNull(rsp.getClaims());
+        assertFalse(rsp.getVerifySubject());
         assertNull(rsp.getJwksEndpoint());
     }
 
@@ -59,7 +59,7 @@ public class ConfigTest {
         assertEquals(req.getAppId(), rsp.getAppId());
         assertNotNull(rsp.getModified());
         assertNotNull(rsp.getCreated());
-        assertNull(rsp.getClaims());
+        assertFalse(rsp.getVerifySubject());
         assertNull(rsp.getJwksEndpoint());
     }
 
@@ -77,29 +77,13 @@ public class ConfigTest {
     }
 
     @Test
-    public void Test_Modify_SingleClaim_Success() {
+    public void Test_Modify_VerifySubject_Success() {
         ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
         ConfigAORsp orig = service.modify(req);
         assertNull(orig.getJwksEndpoint());
-
-        List<String> claims = List.of("sub");
-        req.setClaims(claims);
+        req.setVerifySubject(true);
         ConfigAORsp update = service.modify(req);
-        assertEquals(claims, update.getClaims());
-        assertNotEquals(orig.getModified(), update.getModified());
-    }
-
-    @Test
-    public void Test_Modify_MultipleClaims_Success() {
-        ConfigAOReq req = new ConfigAOReq(UUID.randomUUID().toString(), null, null);
-        req.setAppId(UUID.randomUUID().toString());
-        ConfigAORsp orig = service.modify(req);
-        assertNull(orig.getJwksEndpoint());
-
-        List<String> claims = List.of("sub", "aud");
-        req.setClaims(claims);
-        ConfigAORsp update = service.modify(req);
-        assertEquals(claims, update.getClaims());
+        assertEquals(true, update.getVerifySubject());
         assertNotEquals(orig.getModified(), update.getModified());
     }
 }
