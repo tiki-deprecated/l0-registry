@@ -46,7 +46,7 @@ public class IdController {
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-id-get",
             summary = "Get Addresses", description = "Get addresses registered for a custom ID",
             security = @SecurityRequirement(name = "jwt"))
-    @RequestMapping(method = RequestMethod.POST, path = "/{id}/addresses")
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}/addresses")
     public IdAORsp postAddresses(
             Principal principal,
             @RequestHeader(AddressSignature.HEADER) String addressSignature,
@@ -57,5 +57,13 @@ public class IdController {
                 id,
                 new AddressSignature(addressSignature),
                 customerToken.replace("Bearer: ", ""));
+    }
+
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-id-delete",
+            summary = "Delete ID", description = "Delete a custom ID",
+            security = @SecurityRequirement(name = "jwt"))
+    @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
+    public void deleteId(Principal principal, @PathVariable("id") String id) {
+        service.delete(principal.getName(), id);
     }
 }

@@ -7,6 +7,7 @@ package com.mytiki.l0_registry.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mytiki.l0_registry.features.latest.config.ConfigController;
+import com.mytiki.l0_registry.features.latest.id.IdController;
 import com.mytiki.l0_registry.utilities.Constants;
 import com.mytiki.spring_rest_api.ApiConstants;
 import com.mytiki.spring_rest_api.SecurityConstants;
@@ -83,6 +84,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH ).permitAll()
                 .requestMatchers(ConfigController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
+                .requestMatchers(HttpMethod.DELETE, IdController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
                 .anyRequest().authenticated().and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint).and()

@@ -12,4 +12,5 @@ import java.util.Optional;
 
 public interface SignRepository extends JpaRepository<SignDO, Long> {
     Optional<SignDO> getFirstByIdOrderByCreatedDesc(IdDO id);
+    void deleteAllById(IdDO id);
 }

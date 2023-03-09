@@ -29,4 +29,8 @@ public class AddressService {
         save.setCreated(ZonedDateTime.now());
         repository.save(save);
     }
+
+    public void deleteById(IdDO id){
+        repository.deleteAllById(id);
+    }
 }

@@ -44,4 +44,8 @@ public class SignService {
             return cycle(id);
         else return Base64.getEncoder().encodeToString(latest.get().getPrivateKey());
     }
+
+    public void deleteAllById(IdDO id){
+        repository.deleteAllById(id);
+    }
 }
