@@ -114,6 +114,16 @@ public class IdService {
         return rsp;
     }
 
+    @Transactional
+    public void delete(String appId, String id){
+        Optional<IdDO> found = repository.getByCustomerIdAndConfigAppId(id, appId);
+        if(found.isPresent()){
+            addressService.deleteById(found.get());
+            signService.deleteAllById(found.get());
+            repository.deleteByCid(found.get().getCid());
+        }
+    }
+
     private void guardForSignature(AddressSignature signature){
         try{
             RSAPublicKey publicKey = RSAFacade.decodePublicKey(signature.getPubKey());

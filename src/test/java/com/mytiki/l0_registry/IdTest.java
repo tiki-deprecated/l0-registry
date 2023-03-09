@@ -48,7 +48,6 @@ public class IdTest {
     @Autowired
     private IdService service;
 
-
     @Test
     public void Test_GetNone_Success() throws JOSEException, NoSuchAlgorithmException, CryptoException {
         RSAKey keypair = keypair();
@@ -154,6 +153,22 @@ public class IdTest {
                     service.get(appId, cid, new AddressSignature(header), null);
                 });
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getHttpStatus());
+    }
+
+    @Test
+    public void Test_Delete_Success() throws JOSEException, CryptoException, NoSuchAlgorithmException {
+        String id = UUID.randomUUID().toString();
+        String appId = UUID.randomUUID().toString();
+        RSAKey keypair = keypair();
+        String address = address(keypair.toRSAPublicKey());
+        String signHeader = buildSignature(keypair);
+
+        IdAOReq req = new IdAOReq(id, address);
+        service.register(appId, req, new AddressSignature(signHeader), null);
+        service.delete(appId, id);
+
+        IdAORsp rsp = service.get(appId, id, new AddressSignature(signHeader), null);
+        assertNull(rsp);
     }
 
     private RSAKey keypair() throws JOSEException {

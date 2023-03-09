@@ -11,4 +11,5 @@ import java.util.Optional;
 
 public interface IdRepository extends JpaRepository<IdDO, Long> {
     Optional<IdDO> getByCustomerIdAndConfigAppId(String customerId, String appId);
+    void deleteByCid(Long cid);
 }
