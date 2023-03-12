@@ -80,9 +80,10 @@ jobs:
           PGPASSWORD: pgtestpw
 
       - name: OAS3
-        run: doppler run -c tst -- mvn -DargLine="-Dspring.profiles.active=ci" clean verify
+        run: doppler run -c tst -- mvn clean verify
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_ST }}
+          SPRING_PROFILES_ACTIVE: ci
 
       - name: Commit Changes
         continue-on-error: true
