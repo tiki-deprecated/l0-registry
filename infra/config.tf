@@ -2,7 +2,7 @@
 # MIT license. See LICENSE file in root directory.
 
 locals {
-  port     = 8504
+  port     = 8507
   vpc_uuid = "0375b29c-32a0-4edf-86c5-5cdd33137540"
   region   = "nyc3"
 }
