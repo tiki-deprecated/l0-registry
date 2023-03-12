@@ -80,7 +80,7 @@ jobs:
           PGPASSWORD: pgtestpw
 
       - name: OAS3
-        run: doppler run -c tst -- mvn clean package
+        run: doppler run -c tst -- mvn clean package verify
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_ST }}
 
