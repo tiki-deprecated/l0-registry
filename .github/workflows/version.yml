@@ -80,7 +80,7 @@ jobs:
           PGPASSWORD: pgtestpw
 
       - name: OAS3
-        run: doppler run -c tst -- mvn clean verify
+        run: doppler run -c tst -- mvn clean package
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_ST }}
 
@@ -92,7 +92,7 @@ jobs:
           git config --global user.email "action@github.com"
           git config --global user.name "GH Action"
           git add pom.xml
-          git add docs/
+          git add openapi.yaml
           git commit -m 'version bump'
           git push
 
