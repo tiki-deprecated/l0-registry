@@ -12,6 +12,9 @@ import com.mytiki.l0_registry.features.latest.id.IdService;
 import com.mytiki.l0_registry.features.latest.sign.SignRepository;
 import com.mytiki.l0_registry.features.latest.sign.SignService;
 import com.mytiki.l0_registry.main.App;
+import com.mytiki.l0_registry.utilities.B64Url;
+import com.mytiki.l0_registry.utilities.RSAFacade;
+import com.mytiki.l0_registry.utilities.SHA3Facade;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -20,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;

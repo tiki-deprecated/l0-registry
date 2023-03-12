@@ -49,7 +49,7 @@ public class IdService {
     }
 
     @Transactional
-    public IdAORsp get(String appId, String id, AddressSignature addressSignature, String customerToken){
+    public IdAORsp get(String appId, String id, AddressSignature addressSignature){
         try {
             guardForSignature(addressSignature);
             String address = B64Url.encode(SHA3Facade.sha256(
@@ -67,7 +67,6 @@ public class IdService {
                             .detail("Address is not a member")
                             .help("Try adding the address to the id first")
                             .build();
-                jwksService.guard(found.get().getCustomerId(), customerToken, found.get().getConfig());
                 IdAORsp rsp = new IdAORsp();
                 rsp.setAddresses(addressList);
                 rsp.setSignKey(signService.get(found.get()));
