@@ -1,0 +1,214 @@
+openapi: 3.0.1
+info:
+  title: L0 Registry
+  description: Service to map addresses to an ID
+  license:
+    name: MIT
+    url: https://github.com/tiki/l0-registry/blob/main/LICENSE
+  version: 0.1.0
+servers:
+- url: https://registry.l0.mytiki.com
+paths:
+  /api/latest/id:
+    post:
+      tags:
+      - ID
+      summary: Register Address
+      description: Register an address for a custom ID
+      operationId: l0-registry-id-post
+      parameters:
+      - name: X-Address-Signature
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: X-Customer-Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdAOReq'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdAORsp'
+      security:
+      - jwt: []
+  /api/latest/config:
+    post:
+      tags:
+      - CONFIG
+      summary: Modify Config
+      description: Modify a configuration
+      operationId: l0-registry-config-post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigAOReq'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigAORsp'
+      security:
+      - jwt: []
+  /health:
+    get:
+      tags:
+      - HEALTH
+      summary: Health Check
+      description: Get service status
+      operationId: l0-registry-health-get
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+              example:
+                message: OK
+  /api/latest/id/{id}/addresses:
+    get:
+      tags:
+      - ID
+      summary: Get Addresses
+      description: Get addresses registered for a custom ID
+      operationId: l0-registry-id-get
+      parameters:
+      - name: X-Address-Signature
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdAORsp'
+      security:
+      - jwt: []
+  /api/latest/config/{app-id}:
+    get:
+      tags:
+      - CONFIG
+      summary: Get Config
+      description: Get a configuration
+      operationId: l0-registry-config-get
+      parameters:
+      - name: app-id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigAORsp'
+      security:
+      - jwt: []
+  /api/latest/id/{id}:
+    delete:
+      tags:
+      - ID
+      summary: Delete ID
+      description: Delete a custom ID
+      operationId: l0-registry-id-delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+      security:
+      - jwt: []
+components:
+  schemas:
+    IdAOReq:
+      type: object
+      properties:
+        id:
+          type: string
+        address:
+          type: string
+    IdAORsp:
+      type: object
+      properties:
+        signKey:
+          type: string
+        addresses:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+    ConfigAOReq:
+      type: object
+      properties:
+        appId:
+          type: string
+        jwksEndpoint:
+          type: string
+          format: uri
+        verifySubject:
+          type: boolean
+    ConfigAORsp:
+      type: object
+      properties:
+        appId:
+          type: string
+        jwksEndpoint:
+          type: string
+          format: uri
+        verifySubject:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+    ApiError:
+      type: object
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+        detail:
+          type: string
+        help:
+          type: string
+        properties:
+          type: object
+          additionalProperties:
+            type: string
+  securitySchemes:
+    jwt:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

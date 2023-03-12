@@ -47,16 +47,14 @@ public class IdController {
             summary = "Get Addresses", description = "Get addresses registered for a custom ID",
             security = @SecurityRequirement(name = "jwt"))
     @RequestMapping(method = RequestMethod.GET, path = "/{id}/addresses")
-    public IdAORsp postAddresses(
+    public IdAORsp getAddresses(
             Principal principal,
             @RequestHeader(AddressSignature.HEADER) String addressSignature,
-            @RequestHeader(value = "X-Customer-Authorization", required = false) String customerToken,
             @PathVariable("id") String id) {
         return service.get(
                 principal.getName(),
                 id,
-                new AddressSignature(addressSignature),
-                customerToken.replace("Bearer: ", ""));
+                new AddressSignature(addressSignature));
     }
 
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-id-delete",

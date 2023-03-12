@@ -55,7 +55,7 @@ public class IdTest {
         String signHeader = buildSignature(keypair);
 
         IdAORsp rsp = service.get(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                new AddressSignature(signHeader), null);
+                new AddressSignature(signHeader));
         assertNull(rsp);
     }
 
@@ -119,7 +119,7 @@ public class IdTest {
 
         IdAOReq req = new IdAOReq(cid, address);
         IdAORsp registerRsp = service.register(appId, req, new AddressSignature(signHeader), null);
-        IdAORsp getRsp = service.get(appId, cid, new AddressSignature(signHeader), null);
+        IdAORsp getRsp = service.get(appId, cid, new AddressSignature(signHeader));
 
         assertEquals(registerRsp.getSignKey(), getRsp.getSignKey());
         assertEquals(registerRsp.getAddresses().size(), getRsp.getAddresses().size());
@@ -131,7 +131,7 @@ public class IdTest {
     public void Test_GetBadSig_Failure(){
         ApiException ex = assertThrows(ApiException.class,
                 () ->  service.get(UUID.randomUUID().toString(), UUID.randomUUID().toString(), new AddressSignature(
-                                UUID.randomUUID() + "." + UUID.randomUUID() + "." + UUID.randomUUID()), null));
+                                UUID.randomUUID() + "." + UUID.randomUUID() + "." + UUID.randomUUID())));
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getHttpStatus());
     }
 
@@ -150,7 +150,7 @@ public class IdTest {
                 () -> {
                     RSAKey kp = keypair();
                     String header = buildSignature(kp);
-                    service.get(appId, cid, new AddressSignature(header), null);
+                    service.get(appId, cid, new AddressSignature(header));
                 });
         assertEquals(HttpStatus.UNAUTHORIZED, ex.getHttpStatus());
     }
@@ -167,7 +167,7 @@ public class IdTest {
         service.register(appId, req, new AddressSignature(signHeader), null);
         service.delete(appId, id);
 
-        IdAORsp rsp = service.get(appId, id, new AddressSignature(signHeader), null);
+        IdAORsp rsp = service.get(appId, id, new AddressSignature(signHeader));
         assertNull(rsp);
     }
 
