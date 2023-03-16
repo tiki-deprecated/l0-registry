@@ -36,6 +36,7 @@ public class IdController {
                           @RequestHeader(AddressSignature.HEADER) String addressSignature,
                           @RequestHeader(value = "X-Customer-Authorization", required = false) String customerToken,
                           @RequestBody IdAOReq body) {
+        if(customerToken == null) customerToken = "";
         return service.register(
                 principal.getName(),
                 body,
