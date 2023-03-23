@@ -30,6 +30,16 @@ public class AddressService {
         repository.save(save);
     }
 
+    public AddressRsp getId(String address, String appId){
+        Optional<AddressDO> found = repository.findByAddressAndIdConfigAppId(address, appId);
+        if(found.isPresent()){
+            AddressRsp rsp = new AddressRsp();
+            rsp.setId(found.get().getId().getCustomerId());
+            return rsp;
+        }else
+            return null;
+    }
+
     public void deleteById(IdDO id){
         repository.deleteAllById(id);
     }

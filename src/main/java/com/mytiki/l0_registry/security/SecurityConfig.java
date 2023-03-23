@@ -6,6 +6,7 @@
 package com.mytiki.l0_registry.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mytiki.l0_registry.features.latest.address.AddressController;
 import com.mytiki.l0_registry.features.latest.config.ConfigController;
 import com.mytiki.l0_registry.features.latest.id.IdController;
 import com.mytiki.l0_registry.utilities.Constants;
@@ -18,10 +19,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -37,15 +41,24 @@ public class SecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final JwtDecoder jwtDecoder;
+    private final String l0IndexId;
+    private final String l0IndexSecret;
+    private final String l0IndexRole;
 
     public SecurityConfig(
             @Autowired ObjectMapper objectMapper,
             @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") URL jwtJwkUri,
             @Value("${spring.security.oauth2.resourceserver.jwt.audiences}") Set<String> jwtAudiences,
-            @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String jwtIssuer) {
+            @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String jwtIssuer,
+            @Value("${com.mytiki.l0_registry.l0_index.id}") String l0IndexId,
+            @Value("${com.mytiki.l0_registry.l0_index.secret}") String l0IndexSecret,
+            @Value("${com.mytiki.l0_registry.l0_index.role}") String l0IndexRole) {
         this.accessDeniedHandler = new AccessDeniedHandler(objectMapper);
         this.authenticationEntryPoint = new AuthenticationEntryPoint(objectMapper);
         this.jwtDecoder = jwtDecoder(jwtJwkUri, jwtAudiences, jwtIssuer);
+        this.l0IndexSecret = l0IndexSecret;
+        this.l0IndexId = l0IndexId;
+        this.l0IndexRole = l0IndexRole;
     }
 
     @Bean
@@ -78,6 +91,7 @@ public class SecurityConfig {
                 ).and()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH ).permitAll()
+                .requestMatchers(HttpMethod.GET, AddressController.PATH_CONTROLLER).hasRole(l0IndexRole)
                 .requestMatchers(ConfigController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
                 .requestMatchers(HttpMethod.DELETE, IdController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
                 .anyRequest().authenticated().and()
@@ -88,6 +102,16 @@ public class SecurityConfig {
                 .accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authenticationEntryPoint);
         return http.build();
+    }
+
+    @Bean
+    public InMemoryUserDetailsManager userDetailsService() {
+        UserDetails user = User.builder()
+                .username(l0IndexId)
+                .password(l0IndexSecret)
+                .roles(l0IndexRole)
+                .build();
+        return new InMemoryUserDetailsManager(user);
     }
 
     private JwtDecoder jwtDecoder(

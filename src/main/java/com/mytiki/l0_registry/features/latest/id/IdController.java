@@ -65,4 +65,12 @@ public class IdController {
     public void deleteId(Principal principal, @PathVariable("id") String id) {
         service.delete(principal.getName(), id);
     }
+
+    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-id-get-pubkey",
+            summary = "Get Public Key", description = "Returns the public key for a custom ID",
+            security = @SecurityRequirement(name = "jwt"))
+    @RequestMapping(method = RequestMethod.GET, path = "/{id}/pubkey")
+    public IdAORspKey getPubKey(Principal principal, @PathVariable("id") String id) {
+        return service.pubKey(principal.getName(), id);
+    }
 }

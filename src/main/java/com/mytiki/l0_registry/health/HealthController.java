@@ -19,20 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "HEALTH")
 @RestController
 @RequestMapping(value = ApiConstants.HEALTH_ROUTE)
 public class HealthController {
 
-    @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-health-get",
-            summary = "Health Check", description = "Get service status")
-    @ApiResponse(
-            responseCode = "200",
-            content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiError.class),
-                    examples = @ExampleObject(value = "{\"message\":\"OK\"}")
-            ))
+    @Operation(hidden = true)
     @RequestMapping(method = RequestMethod.GET)
     public ApiError get(){
         ApiError rsp = new ApiError();
