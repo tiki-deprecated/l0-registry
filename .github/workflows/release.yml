@@ -69,7 +69,6 @@ jobs:
       - name: Registry login
         run: doctl registry login --expiry-seconds 600
 
-
       - name: Mvn project version
         id: version
         run: echo ::set-output name=version::$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)

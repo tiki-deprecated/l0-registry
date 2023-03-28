@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.4</version>
+        <version>3.0.5</version>
     </parent>
 
     <properties>
@@ -65,19 +65,19 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.4</version>
+            <version>42.6.0</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-common</artifactId>
-            <version>2.0.3</version>
+            <version>2.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -88,12 +88,12 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-spring-boot-starter</artifactId>
-            <version>6.15.0</version>
+            <version>6.16.0</version>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-logback</artifactId>
-            <version>6.15.0</version>
+            <version>6.16.0</version>
         </dependency>
 
         <dependency>

@@ -123,9 +123,19 @@ public class IdService {
         }
     }
 
+    public IdAORspKey pubKey(String appId, String id){
+        Optional<IdDO> found = repository.getByCustomerIdAndConfigAppId(id, appId);
+        if(found.isPresent()){
+            IdAORspKey rsp = new IdAORspKey();
+            rsp.setKey(signService.getPublicKey(found.get()));
+            return rsp;
+        }else
+            return null;
+    }
+
     private void guardForSignature(AddressSignature signature){
         try{
-            RSAPublicKey publicKey = RSAFacade.decodePublicKey(signature.getPubKey());
+            RSAPublicKey publicKey = RSAFacade.decodePublicKey(Base64.getDecoder().decode(signature.getPubKey()));
             boolean isValid = RSAFacade.verify(publicKey, signature.getStringToSign(), signature.getSignature());
             if(!isValid)
                 throw new ApiExceptionBuilder(HttpStatus.UNAUTHORIZED)
