@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-registry/blob/main/LICENSE
-  version: 0.1.0
+  version: 0.2.0
 servers:
 - url: https://registry.l0.mytiki.com
 paths:
@@ -64,22 +64,28 @@ paths:
                 $ref: '#/components/schemas/ConfigAORsp'
       security:
       - jwt: []
-  /health:
+  /api/latest/id/{id}/pubkey:
     get:
       tags:
-      - HEALTH
-      summary: Health Check
-      description: Get service status
-      operationId: l0-registry-health-get
+      - ID
+      summary: Get Public Key
+      description: Returns the public key for a custom ID
+      operationId: l0-registry-id-get-pubkey
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-              example:
-                message: OK
+                $ref: '#/components/schemas/IdAORspKey'
+      security:
+      - jwt: []
   /api/latest/id/{id}/addresses:
     get:
       tags:
@@ -192,21 +198,11 @@ components:
         modified:
           type: string
           format: date-time
-    ApiError:
+    IdAORspKey:
       type: object
       properties:
-        id:
+        key:
           type: string
-        message:
-          type: string
-        detail:
-          type: string
-        help:
-          type: string
-        properties:
-          type: object
-          additionalProperties:
-            type: string
   securitySchemes:
     jwt:
       type: http
