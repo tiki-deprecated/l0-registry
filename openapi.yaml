@@ -12,7 +12,7 @@ paths:
   /api/latest/id:
     post:
       tags:
-      - USER
+      - ""
       summary: Register Address
       description: Register an address for a custom ID
       operationId: l0-registry-id-post
@@ -45,7 +45,7 @@ paths:
   /api/latest/config:
     post:
       tags:
-      - CONFIG
+      - ""
       summary: Modify Config
       description: Modify a configuration
       operationId: l0-registry-config-post
@@ -67,7 +67,7 @@ paths:
   /api/latest/id/{id}/pubkey:
     get:
       tags:
-      - USER
+      - ""
       summary: Get Public Key
       description: Returns the public key for a custom ID
       operationId: l0-registry-id-get-pubkey
@@ -89,7 +89,7 @@ paths:
   /api/latest/id/{id}/addresses:
     get:
       tags:
-      - USER
+      - ""
       summary: Get Addresses
       description: Get addresses registered for a custom ID
       operationId: l0-registry-id-get
@@ -116,7 +116,7 @@ paths:
   /api/latest/config/{app-id}:
     get:
       tags:
-      - CONFIG
+      - ""
       summary: Get Config
       description: Get a configuration
       operationId: l0-registry-config-get
@@ -138,7 +138,7 @@ paths:
   /api/latest/id/{id}:
     delete:
       tags:
-      - USER
+      - ""
       summary: Delete ID
       description: Delete a custom ID
       operationId: l0-registry-id-delete
