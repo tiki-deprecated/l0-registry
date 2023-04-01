@@ -7,6 +7,10 @@ on:
     types:
       - closed
 
+permissions:
+  contents: write
+  id-token: write
+
 # Cancel any active builds when new commits are pushed
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
@@ -37,7 +41,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up JDK 19
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '20'
@@ -156,6 +160,6 @@ jobs:
           rdme: openapi openapi.yaml --key=${{ secrets.README_API_KEY }} --id=640d82621da6200026e803f0
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ needs.test_and_push.outputs.version }}
+          tag: ${{ needs.test_and_push.outputs.version }}
