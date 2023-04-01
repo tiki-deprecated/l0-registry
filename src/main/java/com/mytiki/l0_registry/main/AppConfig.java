@@ -44,19 +44,17 @@ public class AppConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("L0 Registry")
-                        .description("Service to map addresses to an ID")
+                        .description("User Registry Service")
                         .version(appVersion)
                         .license(new License()
                                 .name("MIT")
                                 .url("https://github.com/tiki/l0-registry/blob/main/LICENSE")))
-                .servers(Collections.singletonList(
-                        new Server()
+                .servers(Collections.singletonList(new Server()
                                 .url("https://registry.l0.mytiki.com")))
                 .components(new Components()
-                        .addSecuritySchemes("jwt",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                        .addSecuritySchemes("jwt", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
     }
 }
