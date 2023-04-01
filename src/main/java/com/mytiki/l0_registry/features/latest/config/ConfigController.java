@@ -15,6 +15,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "CONFIG")
 @RestController
 @RequestMapping(value = ConfigController.PATH_CONTROLLER)
 public class ConfigController {
