@@ -15,6 +15,7 @@ import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "")
 @RestController
 @RequestMapping(value = ConfigController.PATH_CONTROLLER)
 public class ConfigController {
@@ -28,7 +29,7 @@ public class ConfigController {
 
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-config-get",
             summary = "Get Config", description = "Get a configuration",
-            security = @SecurityRequirement(name = "jwt"))
+            security = @SecurityRequirement(name = "oauth", scopes = { "registry:admin", "registry" }))
     @RequestMapping(method = RequestMethod.GET, path = "/{app-id}")
     public ConfigAORsp getConfig(
             @PathVariable(name = "app-id") String appId) {
@@ -37,7 +38,7 @@ public class ConfigController {
 
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-config-post",
             summary = "Modify Config", description = "Modify a configuration",
-            security = @SecurityRequirement(name = "jwt"))
+            security = @SecurityRequirement(name = "oauth", scopes = { "registry:admin", "registry" }))
     @RequestMapping(method = RequestMethod.POST)
     public ConfigAORsp postConfig(@RequestBody ConfigAOReq body) {
         return service.modify(body);

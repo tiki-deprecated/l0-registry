@@ -5,14 +5,14 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-registry/blob/main/LICENSE
-  version: 1.0.0
+  version: 1.0.1
 servers:
 - url: https://registry.l0.mytiki.com
 paths:
   /api/latest/id:
     post:
       tags:
-      - id-controller
+      - ""
       summary: Register Address
       description: Register an address for a custom ID
       operationId: l0-registry-id-post
@@ -41,11 +41,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/IdAORsp'
       security:
-      - jwt: []
+      - oauth:
+        - registry
   /api/latest/config:
     post:
       tags:
-      - config-controller
+      - ""
       summary: Modify Config
       description: Modify a configuration
       operationId: l0-registry-config-post
@@ -63,11 +64,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConfigAORsp'
       security:
-      - jwt: []
+      - oauth:
+        - registry:admin
+        - registry
   /api/latest/id/{id}/pubkey:
     get:
       tags:
-      - id-controller
+      - ""
       summary: Get Public Key
       description: Returns the public key for a custom ID
       operationId: l0-registry-id-get-pubkey
@@ -85,11 +88,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/IdAORspKey'
       security:
-      - jwt: []
+      - oauth:
+        - registry
   /api/latest/id/{id}/addresses:
     get:
       tags:
-      - id-controller
+      - ""
       summary: Get Addresses
       description: Get addresses registered for a custom ID
       operationId: l0-registry-id-get
@@ -112,11 +116,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/IdAORsp'
       security:
-      - jwt: []
+      - oauth:
+        - registry
   /api/latest/config/{app-id}:
     get:
       tags:
-      - config-controller
+      - ""
       summary: Get Config
       description: Get a configuration
       operationId: l0-registry-config-get
@@ -134,11 +139,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConfigAORsp'
       security:
-      - jwt: []
+      - oauth:
+        - registry:admin
+        - registry
   /api/latest/id/{id}:
     delete:
       tags:
-      - id-controller
+      - ""
       summary: Delete ID
       description: Delete a custom ID
       operationId: l0-registry-id-delete
@@ -152,7 +159,9 @@ paths:
         "200":
           description: OK
       security:
-      - jwt: []
+      - oauth:
+        - registry:admin
+        - registry
 components:
   schemas:
     IdAOReq:
@@ -204,7 +213,12 @@ components:
         key:
           type: string
   securitySchemes:
-    jwt:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+    oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://auth.l0.mytiki.com/api/latest/oauth/token
+          refreshUrl: https://auth.l0.mytiki.com/api/latest/oauth/token
+          scopes:
+            registry: standard access
+            registry:admin: admin access
