@@ -5,14 +5,14 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-registry/blob/main/LICENSE
-  version: 1.0.0
+  version: 1.0.1
 servers:
 - url: https://registry.l0.mytiki.com
 paths:
   /api/latest/id:
     post:
       tags:
-      - id-controller
+      - USER
       summary: Register Address
       description: Register an address for a custom ID
       operationId: l0-registry-id-post
@@ -45,7 +45,7 @@ paths:
   /api/latest/config:
     post:
       tags:
-      - config-controller
+      - CONFIG
       summary: Modify Config
       description: Modify a configuration
       operationId: l0-registry-config-post
@@ -67,7 +67,7 @@ paths:
   /api/latest/id/{id}/pubkey:
     get:
       tags:
-      - id-controller
+      - USER
       summary: Get Public Key
       description: Returns the public key for a custom ID
       operationId: l0-registry-id-get-pubkey
@@ -89,7 +89,7 @@ paths:
   /api/latest/id/{id}/addresses:
     get:
       tags:
-      - id-controller
+      - USER
       summary: Get Addresses
       description: Get addresses registered for a custom ID
       operationId: l0-registry-id-get
@@ -116,7 +116,7 @@ paths:
   /api/latest/config/{app-id}:
     get:
       tags:
-      - config-controller
+      - CONFIG
       summary: Get Config
       description: Get a configuration
       operationId: l0-registry-config-get
@@ -138,7 +138,7 @@ paths:
   /api/latest/id/{id}:
     delete:
       tags:
-      - id-controller
+      - USER
       summary: Delete ID
       description: Delete a custom ID
       operationId: l0-registry-id-delete
