@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
-@Tag(name = "ID")
 @RestController
 @RequestMapping(value = IdController.PATH_CONTROLLER)
 public class IdController {
