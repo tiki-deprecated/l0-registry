@@ -8,11 +8,15 @@ package com.mytiki.l0_registry.main;
 import com.mytiki.l0_registry.health.HealthConfig;
 import com.mytiki.l0_registry.features.FeaturesConfig;
 import com.mytiki.l0_registry.security.SecurityConfig;
+import com.mytiki.l0_registry.utilities.AddressSignature;
 import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.OAuthFlow;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import jakarta.annotation.PostConstruct;
@@ -52,9 +56,14 @@ public class AppConfig {
                 .servers(Collections.singletonList(new Server()
                                 .url("https://registry.l0.mytiki.com")))
                 .components(new Components()
-                        .addSecuritySchemes("jwt", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")));
+                        .addSecuritySchemes("oauth", new SecurityScheme()
+                                .type(SecurityScheme.Type.OAUTH2)
+                                .flows(new OAuthFlows()
+                                        .clientCredentials(new OAuthFlow()
+                                                .tokenUrl("https://auth.l0.mytiki.com/api/latest/oauth/token")
+                                                .refreshUrl("https://auth.l0.mytiki.com/api/latest/oauth/token")
+                                                .scopes(new Scopes()
+                                                        .addString("registry", "standard access")
+                                                        .addString("registry:admin", "admin access"))))));
     }
 }
