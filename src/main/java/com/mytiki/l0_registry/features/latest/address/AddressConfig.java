@@ -21,4 +21,9 @@ public class AddressConfig {
     public AddressService addressService(@Autowired AddressRepository repository){
         return new AddressService(repository);
     }
+
+    @Bean
+    public AddressController addressController(@Autowired AddressService service){
+        return new AddressController(service);
+    }
 }
