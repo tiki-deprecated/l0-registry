@@ -31,7 +31,8 @@ public class AddressService {
     }
 
     public AddressRsp getId(String address, String appId){
-        Optional<AddressDO> found = repository.findByAddressAndIdConfigAppId(address, appId);
+        byte[] addressBytes = B64Url.decode(address);
+        Optional<AddressDO> found = repository.findByAddressAndIdConfigAppId(addressBytes, appId);
         if(found.isPresent()){
             AddressRsp rsp = new AddressRsp();
             rsp.setId(found.get().getId().getCustomerId());
