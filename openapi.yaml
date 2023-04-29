@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
     url: https://github.com/tiki/l0-registry/blob/main/LICENSE
-  version: 1.0.2
+  version: 1.1.0
 servers:
 - url: https://registry.l0.mytiki.com
 paths:
@@ -67,6 +67,38 @@ paths:
       - oauth:
         - registry:admin
         - registry
+  /api/latest/usage:
+    get:
+      tags:
+      - ""
+      summary: Get Usage
+      description: Get an account's monthly usage
+      operationId: l0-registry-usage-get
+      parameters:
+      - name: month
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: year
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UsageAO'
+      security:
+      - oauth:
+        - registry:admin
   /api/latest/id/{id}/pubkey:
     get:
       tags:
@@ -141,7 +173,6 @@ paths:
       security:
       - oauth:
         - registry:admin
-        - registry
   /api/latest/id/{id}:
     delete:
       tags:
@@ -161,7 +192,6 @@ paths:
       security:
       - oauth:
         - registry:admin
-        - registry
 components:
   schemas:
     IdAOReq:
@@ -207,6 +237,24 @@ components:
         modified:
           type: string
           format: date-time
+    UsageAO:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+        apps:
+          type: array
+          items:
+            $ref: '#/components/schemas/UsageAOApp'
+    UsageAOApp:
+      type: object
+      properties:
+        appId:
+          type: string
+        total:
+          type: integer
+          format: int64
     IdAORspKey:
       type: object
       properties:
