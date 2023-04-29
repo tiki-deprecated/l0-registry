@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -39,8 +40,8 @@ import java.util.*;
 import java.util.function.Predicate;
 
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    private static final String ADMIN_SCOPE = "SCOPE_admin";
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final JwtDecoder jwtDecoder;
@@ -93,10 +94,8 @@ public class SecurityConfig {
                         new AntPathRequestMatcher(ConfigController.PATH_CONTROLLER, HttpMethod.POST.name())
                 ).and()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH ).permitAll()
+                .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH).permitAll()
                 .requestMatchers(HttpMethod.GET, AddressController.PATH_CONTROLLER).hasRole(l0IndexRole)
-                .requestMatchers(ConfigController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
-                .requestMatchers(HttpMethod.DELETE, IdController.PATH_CONTROLLER + "/**").hasAuthority(ADMIN_SCOPE)
                 .anyRequest().authenticated().and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint).and()

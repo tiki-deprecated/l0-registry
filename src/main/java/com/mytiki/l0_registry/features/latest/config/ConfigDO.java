@@ -19,6 +19,7 @@ public class ConfigDO implements Serializable {
     private String appId;
     private String jwksEndpoint;
     private boolean verifySubject;
+    private String billingId;
     private ZonedDateTime created;
     private ZonedDateTime modified;
 
@@ -58,6 +59,15 @@ public class ConfigDO implements Serializable {
 
     public void setVerifySubject(boolean verifySubject) {
         this.verifySubject = verifySubject;
+    }
+
+    @Column(name = "billing_id")
+    public String getBillingId() {
+        return billingId;
+    }
+
+    public void setBillingId(String billingId) {
+        this.billingId = billingId;
     }
 
     @Column(name = "created_utc")
