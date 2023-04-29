@@ -13,9 +13,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "")
+@Secured("SCOPE_admin")
 @RestController
 @RequestMapping(value = ConfigController.PATH_CONTROLLER)
 public class ConfigController {
@@ -29,7 +31,7 @@ public class ConfigController {
 
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-config-get",
             summary = "Get Config", description = "Get a configuration",
-            security = @SecurityRequirement(name = "oauth", scopes = { "registry:admin", "registry" }))
+            security = @SecurityRequirement(name = "oauth", scopes = "registry:admin"))
     @RequestMapping(method = RequestMethod.GET, path = "/{app-id}")
     public ConfigAORsp getConfig(
             @PathVariable(name = "app-id") String appId) {

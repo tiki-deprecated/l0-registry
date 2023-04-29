@@ -6,6 +6,7 @@
 package com.mytiki.l0_registry.features.latest.config;
 
 
+import com.mytiki.l0_registry.l0.auth.L0AuthService;
 import com.mytiki.l0_registry.utilities.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -23,7 +24,9 @@ public class ConfigConfig {
     }
 
     @Bean
-    public ConfigService configService(@Autowired ConfigRepository repository){
-        return new ConfigService(repository);
+    public ConfigService configService(
+            @Autowired ConfigRepository repository,
+            @Autowired L0AuthService l0AuthService){
+        return new ConfigService(repository, l0AuthService);
     }
 }

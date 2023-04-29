@@ -11,6 +11,7 @@ import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -60,7 +61,8 @@ public class IdController {
 
     @Operation(operationId = Constants.PROJECT_DASH_PATH +  "-id-delete",
             summary = "Delete ID", description = "Delete a custom ID",
-            security = @SecurityRequirement(name = "oauth", scopes = { "registry:admin", "registry" }))
+            security = @SecurityRequirement(name = "oauth", scopes = "registry:admin"))
+    @Secured("SCOPE_admin")
     @RequestMapping(method = RequestMethod.DELETE, path = "/{id}")
     public void deleteId(Principal principal, @PathVariable("id") String id) {
         service.delete(principal.getName(), id);

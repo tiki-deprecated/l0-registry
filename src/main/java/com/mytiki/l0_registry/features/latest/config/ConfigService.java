@@ -5,6 +5,9 @@
 
 package com.mytiki.l0_registry.features.latest.config;
 
+import com.mytiki.l0_registry.l0.auth.L0AuthAOOrg;
+import com.mytiki.l0_registry.l0.auth.L0AuthAOToken;
+import com.mytiki.l0_registry.l0.auth.L0AuthService;
 import com.mytiki.spring_rest_api.ApiExceptionBuilder;
 import org.springframework.http.HttpStatus;
 
@@ -16,14 +19,32 @@ import java.util.Optional;
 
 public class ConfigService {
     private final ConfigRepository repository;
+    private final L0AuthService l0AuthService;
 
-    public ConfigService(ConfigRepository repository) {
+    public ConfigService(ConfigRepository repository, L0AuthService l0AuthService) {
         this.repository = repository;
+        this.l0AuthService = l0AuthService;
     }
 
     public ConfigAORsp get(String appId){
         Optional<ConfigDO> found = repository.getByAppId(appId);
         return found.map(this::toRsp).orElse(null);
+    }
+
+    public ConfigDO getBilling(String appId){
+        Optional<ConfigDO> found = repository.getByAppId(appId);
+        if(found.isEmpty())
+            throw new ApiExceptionBuilder(HttpStatus.BAD_REQUEST)
+                    .detail("Invalid appId")
+                    .properties("appId", appId)
+                    .build();
+        if(found.get().getBillingId() == null){
+            L0AuthAOToken token = l0AuthService.getToken(List.of("internal:org"));
+            L0AuthAOOrg org = l0AuthService.getOrg(appId, token.getAccessToken());
+            ConfigDO update = found.get();
+            update.setBillingId(org.getBillingId());
+            return repository.save(update);
+        }else return found.get();
     }
 
     public ConfigAORsp modify(ConfigAOReq req){

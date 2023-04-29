@@ -7,6 +7,8 @@ package com.mytiki.l0_registry.main;
 
 import com.mytiki.l0_registry.health.HealthConfig;
 import com.mytiki.l0_registry.features.FeaturesConfig;
+import com.mytiki.l0_registry.l0.L0Config;
+import com.mytiki.l0_registry.l0.auth.L0AuthConfig;
 import com.mytiki.l0_registry.security.SecurityConfig;
 import com.mytiki.l0_registry.utilities.AddressSignature;
 import com.mytiki.spring_rest_api.ApiExceptionHandlerDefault;
@@ -24,6 +26,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.security.Security;
 import java.util.Collections;
@@ -33,8 +36,10 @@ import java.util.TimeZone;
         ApiExceptionHandlerDefault.class,
         SecurityConfig.class,
         HealthConfig.class,
-        FeaturesConfig.class
+        FeaturesConfig.class,
+        L0Config.class
 })
+@EnableAsync
 public class AppConfig {
     @PostConstruct
     void starter(){

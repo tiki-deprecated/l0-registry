@@ -10,6 +10,7 @@ import com.mytiki.l0_registry.features.latest.config.ConfigDO;
 import com.mytiki.l0_registry.features.latest.config.ConfigService;
 import com.mytiki.l0_registry.features.latest.jwks.JwksService;
 import com.mytiki.l0_registry.features.latest.sign.SignService;
+import com.mytiki.l0_registry.features.latest.usage.UsageService;
 import com.mytiki.l0_registry.utilities.AddressSignature;
 import com.mytiki.l0_registry.utilities.B64Url;
 import com.mytiki.l0_registry.utilities.RSAFacade;
@@ -34,18 +35,21 @@ public class IdService {
     private final SignService signService;
     private final AddressService addressService;
     private final JwksService jwksService;
+    private final UsageService usageService;
 
     public IdService(
             IdRepository repository,
             ConfigService configService,
             SignService signService,
             AddressService addressService,
-            JwksService jwksService) {
+            JwksService jwksService,
+            UsageService usageService) {
         this.repository = repository;
         this.configService = configService;
         this.signService = signService;
         this.addressService = addressService;
         this.jwksService = jwksService;
+        this.usageService = usageService;
     }
 
     @Transactional
@@ -95,6 +99,7 @@ public class IdService {
             save.setCustomerId(req.getId());
             save.setCreated(ZonedDateTime.now());
             save = repository.save(save);
+            usageService.increment(appId);
             rsp.setSignKey(signService.cycle(save));
             addressService.save(save, req.getAddress());
             rsp.setAddresses(Set.of(req.getAddress()));

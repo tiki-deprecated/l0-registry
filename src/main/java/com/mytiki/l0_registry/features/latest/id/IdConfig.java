@@ -10,6 +10,7 @@ import com.mytiki.l0_registry.features.latest.address.AddressService;
 import com.mytiki.l0_registry.features.latest.config.ConfigService;
 import com.mytiki.l0_registry.features.latest.jwks.JwksService;
 import com.mytiki.l0_registry.features.latest.sign.SignService;
+import com.mytiki.l0_registry.features.latest.usage.UsageService;
 import com.mytiki.l0_registry.utilities.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -32,7 +33,8 @@ public class IdConfig {
             @Autowired ConfigService configService,
             @Autowired SignService signService,
             @Autowired AddressService addressService,
-            @Autowired JwksService jwksService){
-        return new IdService(repository, configService, signService, addressService, jwksService);
+            @Autowired JwksService jwksService,
+            @Autowired UsageService usageService){
+        return new IdService(repository, configService, signService, addressService, jwksService, usageService);
     }
 }

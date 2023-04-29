@@ -10,6 +10,7 @@ import com.mytiki.l0_registry.features.latest.config.ConfigConfig;
 import com.mytiki.l0_registry.features.latest.id.IdConfig;
 import com.mytiki.l0_registry.features.latest.jwks.JwksConfig;
 import com.mytiki.l0_registry.features.latest.sign.SignConfig;
+import com.mytiki.l0_registry.features.latest.usage.UsageConfig;
 import org.springframework.context.annotation.Import;
 
 @Import({
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Import;
         IdConfig.class,
         AddressConfig.class,
         SignConfig.class,
-        JwksConfig.class
+        JwksConfig.class,
+        UsageConfig.class
 })
 public class FeaturesConfig {}

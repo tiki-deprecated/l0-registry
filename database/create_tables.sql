@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS config(
     config_id BIGSERIAL PRIMARY KEY,
     app_id TEXT NOT NULL UNIQUE,
     jwks_endpoint TEXT,
+    billing_id TEXT,
     verify_subject BOOLEAN DEFAULT FALSE,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
     modified_utc TIMESTAMP WITH TIME ZONE NOT NULL
@@ -55,4 +56,16 @@ CREATE TABLE IF NOT EXISTS jwks(
     key_set TEXT NOT NULL,
     modified_utc TIMESTAMP WITH TIME ZONE NOT NULL,
     created_utc TIMESTAMP WITH TIME ZONE NOT NULL
+);
+
+-- -----------------------------------------------------------------------
+-- USAGE
+-- -----------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS usage(
+    usage_id BIGSERIAL PRIMARY KEY,
+    config_id BIGINT NOT NULL,
+    total BIGINT NOT NULL,
+    modified_utc TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_utc TIMESTAMP WITH TIME ZONE NOT NULL,
+    FOREIGN KEY(config_id) REFERENCES config(config_id)
 );
