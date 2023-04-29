@@ -29,8 +29,10 @@ public class UsageConfig {
             @Autowired ConfigService configService,
             @Autowired L0AuthService l0AuthService,
             @Value("${com.mytiki.l0_registry.usage.min_users}") int minUsers,
-            @Value("${com.mytiki.l0_registry.usage.stripe.key}") String stripekey){
+            @Value("${com.mytiki.l0_registry.usage.stripe.key}") String stripekey,
+            @Value("${com.mytiki.l0_registry.usage.stripe.price.nu}") String nuPriceId,
+            @Value("${com.mytiki.l0_registry.usage.stripe.price.mau}") String mauPriceId){
         Stripe.apiKey = stripekey;
-        return new UsageService(repository, configService, l0AuthService, minUsers);
+        return new UsageService(repository, configService, l0AuthService, minUsers, mauPriceId, nuPriceId);
     }
 }

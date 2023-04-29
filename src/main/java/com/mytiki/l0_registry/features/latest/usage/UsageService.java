@@ -28,16 +28,22 @@ public class UsageService {
     private final ConfigService configService;
     private final L0AuthService l0AuthService;
     private final int minUsers;
+    private final String mauPriceId;
+    private final String nuPriceId;
 
     public UsageService(
             UsageRepository repository,
             ConfigService configService,
             L0AuthService l0AuthService,
-            int minUsers) {
+            int minUsers,
+            String mauPriceId,
+            String nuPriceId) {
         this.repository = repository;
         this.configService = configService;
         this.l0AuthService = l0AuthService;
         this.minUsers = minUsers;
+        this.mauPriceId = mauPriceId;
+        this.nuPriceId = nuPriceId;
     }
 
     public void increment(String appId){
@@ -127,8 +133,8 @@ public class UsageService {
 
             for (SubscriptionItem item : subscriptions.get(0).getItems().getData()) {
                 String priceId = item.getPrice().getId();
-                if (priceId.equals("price_1MwYogDveWor0wgFtobq28xO")) mauItem = item.getId();
-                if (priceId.equals("price_1MwYcVDveWor0wgFJZfsPAAs")) nuItem = item.getId();
+                if (priceId.equals(mauPriceId)) mauItem = item.getId();
+                if (priceId.equals(nuPriceId)) nuItem = item.getId();
             }
 
             if (mauItem == null || nuItem == null) {
