@@ -5,6 +5,7 @@
 
 package com.mytiki.l0_registry.features.latest.config;
 
+import com.mytiki.l0_registry.l0.auth.L0AuthAOApp;
 import com.mytiki.l0_registry.l0.auth.L0AuthAOOrg;
 import com.mytiki.l0_registry.l0.auth.L0AuthAOToken;
 import com.mytiki.l0_registry.l0.auth.L0AuthService;
@@ -39,8 +40,9 @@ public class ConfigService {
                     .properties("appId", appId)
                     .build();
         if(found.get().getBillingId() == null){
-            L0AuthAOToken token = l0AuthService.getToken(List.of("internal:org"));
-            L0AuthAOOrg org = l0AuthService.getOrg(appId, token.getAccessToken());
+            L0AuthAOToken token = l0AuthService.getToken(List.of("auth:internal:read"));
+            L0AuthAOApp app = l0AuthService.getApp(appId, token.getAccessToken());
+            L0AuthAOOrg org = l0AuthService.getOrg(app.getOrgId(), token.getAccessToken());
             ConfigDO update = found.get();
             update.setBillingId(org.getBillingId());
             return repository.save(update);
