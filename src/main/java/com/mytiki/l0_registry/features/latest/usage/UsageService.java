@@ -12,6 +12,7 @@ import com.stripe.model.SubscriptionItem;
 import com.stripe.model.UsageRecord;
 import com.stripe.param.SubscriptionListParams;
 import com.stripe.param.UsageRecordCreateOnSubscriptionItemParams;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -46,6 +47,7 @@ public class UsageService {
         this.nuPriceId = nuPriceId;
     }
 
+    @Transactional
     public void increment(String appId){
         ZonedDateTime now = ZonedDateTime.now();
         ZonedDateTime start = now.truncatedTo(ChronoUnit.DAYS);
@@ -53,9 +55,15 @@ public class UsageService {
         long total;
         UsageDO update;
         if(found.isEmpty()){
+            Optional<UsageDO> latest = repository.getFirstByConfigAppIdOrderByCreatedDesc(appId);
             update = new UsageDO();
-            update.setConfig(configService.getCreate(appId));
-            total = 1L;
+            if(latest.isPresent()){
+                total = latest.get().getTotal() + 1;
+                update.setConfig(latest.get().getConfig());
+            }else{
+                update.setConfig(configService.getCreate(appId));
+                total = 1L;
+            }
             update.setCreated(now);
         }else{
             update = found.get(0);
@@ -64,7 +72,35 @@ public class UsageService {
         update.setTotal(total);
         update.setModified(now);
         repository.save(update);
-        report(appId);
+        report(appId, total, 1L);
+    }
+
+    @Transactional
+    public void decrement(String appId){
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime start = now.truncatedTo(ChronoUnit.DAYS);
+        List<UsageDO> found = repository.getAllByConfigAppIdAndCreatedBetween(appId, start, start.plusDays(1));
+        long total;
+        UsageDO update;
+        if(found.isEmpty()){
+            Optional<UsageDO> latest = repository.getFirstByConfigAppIdOrderByCreatedDesc(appId);
+            update = new UsageDO();
+            if(latest.isPresent()){
+                total = latest.get().getTotal() - 1;
+                update.setConfig(latest.get().getConfig());
+            }else{
+                update.setConfig(configService.getCreate(appId));
+                total = 0L;
+            }
+            update.setCreated(now);
+        }else{
+            update = found.get(0);
+            total = update.getTotal() - 1;
+        }
+        update.setTotal(total);
+        update.setModified(now);
+        repository.save(update);
+        report(appId, total, 0L);
     }
 
     public List<UsageAO> get(String userId, Integer month, Integer year){
@@ -109,11 +145,9 @@ public class UsageService {
     }
 
     @Async
-    void report(String appId) {
+    void report(String appId, long mau, long nu) {
         try {
-            ZonedDateTime end = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusDays(1);
-            Long monthlyTotal = repository.getTotalByConfigAppIdAndCreatedBetween(appId, end.minusMonths(1), end);
-            if (monthlyTotal == null || monthlyTotal <= minUsers) return;
+            if (mau <= minUsers) return;
 
             ConfigDO config = configService.getBilling(appId);
             if (config.getBillingId() == null) {
@@ -146,13 +180,13 @@ public class UsageService {
             }
 
             UsageRecordCreateOnSubscriptionItemParams mauParams = new UsageRecordCreateOnSubscriptionItemParams.Builder()
-                    .setQuantity(monthlyTotal)
+                    .setQuantity(mau)
                     .build();
             UsageRecordCreateOnSubscriptionItemParams nuParams = new UsageRecordCreateOnSubscriptionItemParams.Builder()
-                    .setQuantity(1L)
+                    .setQuantity(nu)
                     .build();
-            UsageRecord.createOnSubscriptionItem(mauItem, mauParams, null);
-            UsageRecord.createOnSubscriptionItem(nuItem, nuParams, null);
+            if(mau > 0) UsageRecord.createOnSubscriptionItem(mauItem, mauParams, null);
+            if(nu > 0) UsageRecord.createOnSubscriptionItem(nuItem, nuParams, null);
         }catch (StripeException ex){
             logger.error(ex.getMessage(), ex);
         }
