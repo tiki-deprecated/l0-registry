@@ -64,7 +64,7 @@ public class UsageService {
         update.setTotal(total);
         update.setModified(now);
         repository.save(update);
-        report(appId, total);
+        report(appId);
     }
 
     public List<UsageAO> get(String userId, Integer month, Integer year){
@@ -109,9 +109,12 @@ public class UsageService {
     }
 
     @Async
-    void report(String appId, long total) {
+    void report(String appId) {
         try {
-            if (total <= minUsers) return;
+            ZonedDateTime end = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS).plusDays(1);
+            Long monthlyTotal = repository.getTotalByConfigAppIdAndCreatedBetween(appId, end.minusMonths(1), end);
+            if (monthlyTotal == null || monthlyTotal <= minUsers) return;
+
             ConfigDO config = configService.getBilling(appId);
             if (config.getBillingId() == null) {
                 logger.error("No billing id for appId: " + appId);
@@ -143,7 +146,7 @@ public class UsageService {
             }
 
             UsageRecordCreateOnSubscriptionItemParams mauParams = new UsageRecordCreateOnSubscriptionItemParams.Builder()
-                    .setQuantity(total)
+                    .setQuantity(monthlyTotal)
                     .build();
             UsageRecordCreateOnSubscriptionItemParams nuParams = new UsageRecordCreateOnSubscriptionItemParams.Builder()
                     .setQuantity(1L)
