@@ -145,9 +145,9 @@ public class UsageService {
     }
 
     @Async
-    void report(String appId, long mau, long nu) {
+    void report(String appId, long activeUsers, long newUsers) {
         try {
-            if (mau <= minUsers) return;
+            if (activeUsers <= minUsers) return;
 
             ConfigDO config = configService.getBilling(appId);
             if (config.getBillingId() == null) {
@@ -180,13 +180,13 @@ public class UsageService {
             }
 
             UsageRecordCreateOnSubscriptionItemParams mauParams = new UsageRecordCreateOnSubscriptionItemParams.Builder()
-                    .setQuantity(mau)
+                    .setQuantity(activeUsers)
                     .build();
             UsageRecordCreateOnSubscriptionItemParams nuParams = new UsageRecordCreateOnSubscriptionItemParams.Builder()
-                    .setQuantity(nu)
+                    .setQuantity(newUsers)
                     .build();
-            if(mau > 0) UsageRecord.createOnSubscriptionItem(mauItem, mauParams, null);
-            if(nu > 0) UsageRecord.createOnSubscriptionItem(nuItem, nuParams, null);
+            if(activeUsers > 0) UsageRecord.createOnSubscriptionItem(mauItem, mauParams, null);
+            if(newUsers > 0) UsageRecord.createOnSubscriptionItem(nuItem, nuParams, null);
         }catch (StripeException ex){
             logger.error(ex.getMessage(), ex);
         }
