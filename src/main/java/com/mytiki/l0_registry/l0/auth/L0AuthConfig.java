@@ -13,6 +13,6 @@ public class L0AuthConfig {
             @Value("${com.mytiki.l0_registry.l0_auth.key.id}") String id,
             @Value("${com.mytiki.l0_registry.l0_auth.key.secret}") String secret,
             @Autowired RestTemplateBuilder builder){
-        return new L0AuthService(builder.rootUri(uri).build(),id,secret);
+        return new L0AuthService(builder.rootUri(uri).build(), id, secret);
     }
 }
