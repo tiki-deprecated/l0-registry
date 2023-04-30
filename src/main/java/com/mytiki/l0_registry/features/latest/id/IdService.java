@@ -125,6 +125,7 @@ public class IdService {
             addressService.deleteById(found.get());
             signService.deleteAllById(found.get());
             repository.deleteByCid(found.get().getCid());
+            usageService.decrement(appId);
         }
     }
 

@@ -1,44 +1,25 @@
 package com.mytiki.l0_registry;
 
-import com.mytiki.l0_registry.features.latest.config.ConfigDO;
 import com.mytiki.l0_registry.features.latest.config.ConfigService;
-import com.mytiki.l0_registry.features.latest.id.IdDO;
-import com.mytiki.l0_registry.features.latest.sign.SignRepository;
-import com.mytiki.l0_registry.features.latest.usage.UsageAO;
 import com.mytiki.l0_registry.features.latest.usage.UsageDO;
 import com.mytiki.l0_registry.features.latest.usage.UsageRepository;
 import com.mytiki.l0_registry.features.latest.usage.UsageService;
-import com.mytiki.l0_registry.l0.auth.L0AuthService;
 import com.mytiki.l0_registry.main.App;
-import com.stripe.Stripe;
-import com.stripe.exception.StripeException;
-import com.stripe.model.Subscription;
-import com.stripe.model.SubscriptionCollection;
-import com.stripe.model.SubscriptionItem;
-import com.stripe.model.UsageRecord;
-import com.stripe.param.SubscriptionListParams;
-import com.stripe.param.UsageRecordCreateOnSubscriptionItemParams;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.client.MockRestServiceServer;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -54,6 +35,9 @@ public class UsageTest {
 
     @Autowired
     private UsageRepository repository;
+
+    @Autowired
+    private ConfigService configService;
 
     @Test
     public void Test_IncrementNone_Success(){
@@ -91,6 +75,83 @@ public class UsageTest {
         assertEquals(1, usage.size());
         assertEquals(appId, usage.get(0).getConfig().getAppId());
         assertEquals(iterations, usage.get(0).getTotal());
+        assertNotNull(usage.get(0).getUsageId());
+        assertNotNull(usage.get(0).getModified());
+        assertNotNull(usage.get(0).getCreated());
+    }
+
+    @Test
+    public void Test_IncrementMultipleDays_Success(){
+        ZonedDateTime now = ZonedDateTime.now();
+
+        String appId = UUID.randomUUID().toString();
+        UsageDO usage = new UsageDO();
+
+        usage.setConfig(configService.getCreate(appId));
+        usage.setTotal(1L);
+        usage.setCreated(now.minusDays(3));
+        usage.setModified(now.minusDays(3));
+        repository.save(usage);
+
+        service.increment(appId);
+
+        ZonedDateTime start = now.truncatedTo(ChronoUnit.DAYS);
+        List<UsageDO> today =
+                repository.getAllByConfigAppIdAndCreatedBetween(appId, start, start.plusDays(1));
+
+        assertEquals(1, today.size());
+        assertEquals(appId, today.get(0).getConfig().getAppId());
+        assertEquals(2, today.get(0).getTotal());
+        assertNotNull(today.get(0).getUsageId());
+        assertNotNull(today.get(0).getModified());
+        assertNotNull(today.get(0).getCreated());
+    }
+
+    @Test
+    public void Test_DecrementMultipleDays_Success(){
+        ZonedDateTime now = ZonedDateTime.now();
+
+        String appId = UUID.randomUUID().toString();
+        UsageDO usage = new UsageDO();
+
+        usage.setConfig(configService.getCreate(appId));
+        usage.setTotal(1L);
+        usage.setCreated(now.minusDays(3));
+        usage.setModified(now.minusDays(3));
+        repository.save(usage);
+
+        service.decrement(appId);
+
+        ZonedDateTime start = now.truncatedTo(ChronoUnit.DAYS);
+        List<UsageDO> today =
+                repository.getAllByConfigAppIdAndCreatedBetween(appId, start, start.plusDays(1));
+
+        assertEquals(1, today.size());
+        assertEquals(appId, today.get(0).getConfig().getAppId());
+        assertEquals(0, today.get(0).getTotal());
+        assertNotNull(today.get(0).getUsageId());
+        assertNotNull(today.get(0).getModified());
+        assertNotNull(today.get(0).getCreated());
+    }
+
+    @Test
+    public void Test_DecrementExists_Success(){
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime start = now.truncatedTo(ChronoUnit.DAYS);
+
+        String appId = UUID.randomUUID().toString();
+        int iterations = 10;
+        for(int i=0; i<iterations; i++) {
+            service.increment(appId);
+        }
+        service.decrement(appId);
+
+        List<UsageDO> usage =
+                repository.getAllByConfigAppIdAndCreatedBetween(appId, start, start.plusDays(1));
+
+        assertEquals(1, usage.size());
+        assertEquals(appId, usage.get(0).getConfig().getAppId());
+        assertEquals(iterations-1, usage.get(0).getTotal());
         assertNotNull(usage.get(0).getUsageId());
         assertNotNull(usage.get(0).getModified());
         assertNotNull(usage.get(0).getCreated());

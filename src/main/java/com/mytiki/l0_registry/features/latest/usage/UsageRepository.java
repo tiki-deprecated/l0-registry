@@ -10,9 +10,5 @@ import java.util.Optional;
 public interface UsageRepository extends JpaRepository<UsageDO, Long> {
     List<UsageDO> getAllByConfigAppIdAndCreatedBetween(String appId, ZonedDateTime start, ZonedDateTime end);
 
-    @Query("SELECT SUM(u.total) " +
-            "FROM UsageDO u " +
-            "WHERE u.config.appId = :appId " +
-            "AND u.created >= :start AND u.created < :end")
-    Long getTotalByConfigAppIdAndCreatedBetween(String appId, ZonedDateTime start, ZonedDateTime end);
+    Optional<UsageDO> getFirstByConfigAppIdOrderByCreatedDesc(String appId);
 }
