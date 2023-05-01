@@ -28,7 +28,7 @@ updates:
       - "chore"
 
   - package-ecosystem: "terraform"
-    directory: "infra"
+    directory: "/infra"
     schedule:
       interval: "weekly"
     commit-message:
