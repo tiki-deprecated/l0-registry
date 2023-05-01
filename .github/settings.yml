@@ -1,4 +1,3 @@
-# Labels: define labels for Issues and Pull Requests
 labels:
   - name: breaking
     color: D73A4A
