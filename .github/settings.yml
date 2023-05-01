@@ -8,8 +8,7 @@ labels:
     color: 7057FF
     description: Good for newcomers.
 
-  - name: 'help wanted'
-    new_name: help
+  - name: help
     color: 0E8A16
     description: Requires help to resolve.
 
@@ -37,28 +36,23 @@ labels:
     color: FEF2C0
     description: Naming, organizing folder structure, and less impactful tasks.
 
-  - name: question
-    new_name: discuss
+  - name: discuss
     color: D4C5F9
     description: Questions, proposals and info that requires discussion.
 
-  - name: documentation
-    new_name: docs
+  - name: docs
     color: FEF2C0
     description: Related to documentation and information.
 
-  - name: enhancement
-    new_name: feature
+  - name: feature
     color: 5EBEFF
     description: Brand new functionality, features, pages, workflows, endpoints, etc.
 
-  - name: wontfix
-    new_name: fix
+  - name: fix
     color: 91CA55
     description: Iterations on existing features or infrastructure.
     
-  - name: invalid
-    new_name: security
+  - name: security
     color: D73A4A
     description: Something is vulnerable or not secure.
 
