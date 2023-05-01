@@ -30,7 +30,7 @@ labels:
     description: Something is blocking this.
 
   - name: bug
-    color: D73A4A
+    color: FFB8C6
     description: Something isn't working.
 
   - name: chore
@@ -63,7 +63,7 @@ labels:
     description: Something is vulnerable or not secure.
 
   - name: testing
-    color: FBCA04
+    color: 64CFDB
     description: Related to testing.
 
   - name: duplicate
