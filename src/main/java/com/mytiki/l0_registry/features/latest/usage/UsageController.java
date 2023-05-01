@@ -12,6 +12,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Tag(name = "")
@@ -33,8 +34,7 @@ public class UsageController {
     @RequestMapping(method = RequestMethod.GET)
     public List<UsageAO> getAddresses(
             Principal principal,
-            @RequestParam(required = false) Integer month,
-            @RequestParam(required = false) Integer year) {
-        return service.get(principal.getName(), month, year);
+            @RequestParam(required = false) ZonedDateTime day) {
+        return service.get(principal.getName(), day);
     }
 }
