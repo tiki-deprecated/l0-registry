@@ -103,17 +103,14 @@ public class UsageService {
         report(appId, total, 0L);
     }
 
-    public List<UsageAO> get(String userId, Integer month, Integer year){
-        ZonedDateTime now = ZonedDateTime.now();
-        if(year == null) year = now.getYear();
-        if(month == null) month = now.getMonthValue();
-
+    public List<UsageAO> get(String userId, ZonedDateTime req){
+        if(req == null) req = ZonedDateTime.now();
         Set<String> apps = getApps(userId);
-        ZonedDateTime start = now.withYear(year).withMonth(month).withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        ZonedDateTime end = req.plusDays(1).truncatedTo(ChronoUnit.DAYS);
         Map<ZonedDateTime, List<UsageAOApp>> dateMap = new HashMap<>();
 
         for (String app : apps) {
-            List<UsageDO> days = repository.getAllByConfigAppIdAndCreatedBetween(app, start, start.plusMonths(1));
+            List<UsageDO> days = repository.getAllByConfigAppIdAndCreatedBetween(app, end.minusMonths(1), end);
             days.forEach(usage -> {
                 ZonedDateTime day = usage.getCreated().truncatedTo(ChronoUnit.DAYS);
                 UsageAOApp rsp = new UsageAOApp();
