@@ -40,3 +40,13 @@ Returns: `private_key`
 
 - For sensitive applications, an additional security step will be encouraged. Client applications (by design) are insecure, meaning any client can register any `address` they have the private key for to any `user_id`. To limit authorized users to specific user_id patterns, signing key(s) can be generated per user_id. Typical implementations call `POST /id/{user_id}/keygen` on Login. Requires a valid API Key (not ID).
 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END
