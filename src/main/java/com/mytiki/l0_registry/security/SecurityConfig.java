@@ -95,7 +95,6 @@ public class SecurityConfig {
                 ).and()
                 .authorizeHttpRequests()
                 .requestMatchers(HttpMethod.GET, ApiConstants.HEALTH_ROUTE, Constants.API_DOCS_PATH).permitAll()
-                .requestMatchers(HttpMethod.GET, AddressController.PATH_CONTROLLER).hasRole(l0IndexRole)
                 .anyRequest().authenticated().and()
                 .httpBasic()
                 .authenticationEntryPoint(authenticationEntryPoint).and()

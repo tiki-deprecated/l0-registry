@@ -14,6 +14,7 @@ import com.mytiki.spring_rest_api.ApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -30,6 +31,7 @@ public class AddressController {
         this.service = service;
     }
 
+    @Secured({"ROLE_L0_INDEX", "SCOPE_internal:read"})
     @Operation(hidden = true)
     @RequestMapping(method = RequestMethod.GET, path = "/{address}")
     public AddressRsp getId(
